@@ -11,16 +11,21 @@ const Loginpage = () => {
     const handleChange=()=>{
         console.log('changed!')
     }
+    const [success, setSuccess]=useState<boolean>(false)
     const router=useRouter()
     const login=async()=>{
-        console.log(signupData)
         try {
             
         const { data:dataUser, error } = await supabase.auth.signInWithOtp({
-            email: signupData?.email
+            email: signupData?.email,
+            options:{
+                shouldCreateUser:true
+            }
         })
         if(dataUser){
-            router.refresh()
+            
+            setSuccess(true)
+            //router.refresh()
         }
         } catch (error) {
             console.group(error)
@@ -50,6 +55,7 @@ const Loginpage = () => {
           onChange={(e)=>setSignupData({...signupData,password:e.target.value})}
            /> */}
        </div>
+       {success && <div className='my-4 bg-green-100 p-2 text-green-500'>An email has been sent to {signupData?.email}</div>}
        <div><button onClick={login} type='submit' className='bg-blue-500 p-2 rounded-md'>Login</button></div>
     </form>
   )
