@@ -1,14 +1,19 @@
-
+'use client'
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
+  useEffect(()=>{
+    getSession()
+  },[])
   const router=useRouter()
+  //to logout
   const logout=async ()=>{
     await supabase
     .auth.signOut()
-    .then(()=>{
-      console.log('lOGGED OUT!')
+    .then((data)=>{
+      console.log('lOGGED OUT!', data)
 
       router.refresh()
     })
@@ -17,6 +22,15 @@ export default function Home() {
     })
     
   }
+  //to get session details
+  const getSession=async()=>{
+    const {data:{session}}=await supabase.auth.getSession()
+  }
+  //to refresh session details
+  const refreshSession=async()=>{
+    const {data:{session}}=await supabase.auth.refreshSession()
+  }
+  
   
   return (
    <div>

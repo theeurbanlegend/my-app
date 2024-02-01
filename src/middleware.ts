@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export default async function middlware(req:NextRequest){
     const res=NextResponse.next()
-
+    const publicUrls=['/reset']
+    if(publicUrls.includes(req.nextUrl.pathname)){
+        return res
+    }
     const supabase=createMiddlewareClient({req,res})
     const {data:{session}}=await supabase.auth.getSession()
     if(!session){
