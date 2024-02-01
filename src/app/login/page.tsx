@@ -43,8 +43,7 @@ const Loginpage = () => {
         // })
         if(dataUser){
             console.log(dataUser)
-            setSuccess(true)
-            //router.refresh()
+            router.refresh()
         }
         } catch (error) {
             console.group(error)

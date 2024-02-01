@@ -1,40 +1,34 @@
 'use client'
+import { useViews } from "@/hooks/useSupabase";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import ArticleItem from "./components/ArticleItem";
 
 export default function Home() {
+  
+  const {views,getViews, setViews}=useViews()
+  const subscribedChannel= supabase
+  .channel('views-follow-up')
+.on('postgres_changes',{
+  event:'*',
+  schema:'public',
+  table:'votes'
+},(payload:any)=>{
+  getViews()
+}
+).subscribe()
   useEffect(()=>{
-    getSession()
+    console.log("hi")
+    getViews()
   },[])
-  const router=useRouter()
-  //to logout
-  const logout=async ()=>{
-    await supabase
-    .auth.signOut()
-    .then((data)=>{
-      console.log('lOGGED OUT!', data)
-
-      router.refresh()
-    })
-    .catch(error=>{
-      console.log(error)
-    })
-    
-  }
-  //to get session details
-  const getSession=async()=>{
-    const {data:{session}}=await supabase.auth.getSession()
-  }
-  //to refresh session details
-  const refreshSession=async()=>{
-    const {data:{session}}=await supabase.auth.refreshSession()
-  }
-  
-  
   return (
-   <div>
-    <button className='px-3 py-2 bg-blue-500 text-white cursor-pointer' onClick={logout}>Sign out</button>
-   </div>
-  );
+    <div className="container mx-auto">
+      <ul className="grid gap-4">
+        {views&& views.map((view:any, key:number)=>{
+          return <ArticleItem key={key} view={view} />
+        }) }
+      </ul>
+    </div>
+  )
 }
