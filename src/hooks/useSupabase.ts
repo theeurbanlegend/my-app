@@ -1,19 +1,19 @@
 import { supabase } from "@/lib/supabase";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export const useViews=()=>{
     const [views, setViews]= useState<any[]>([])
-
-    const getViews= async()=>{
-        const {data,status, error}= await supabase
-        .from('views')
-        .select('*, votes(*)')
-
-        if(data){
-            setViews(data)
+    //To run once on every render 
+    const getViews = useCallback(async () => {
+        const { data, status, error } = await supabase
+            .from('views')
+            .select('*, votes(*)');
+    
+        if (data) {
+            setViews(data);
         }
-        if(error) console.log(error)
-    }
+        if (error) console.log(error);
+    }, []);
     const newVote=async(view_id:number, remove?:boolean)=>{
         const {data:{session}, error:sessionError}=await supabase.auth.getSession()
         if(!session) return alert(' You are not authenticated!')

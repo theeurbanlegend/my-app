@@ -6,8 +6,11 @@ import { useEffect } from "react";
 import ArticleItem from "./components/ArticleItem";
 
 export default function Home() {
-  
   const {views,getViews, setViews}=useViews()
+  useEffect(()=>{
+    getViews()
+  },[getViews])
+  
   const subscribedChannel= supabase
   .channel('views-follow-up')
 .on('postgres_changes',{
@@ -18,10 +21,7 @@ export default function Home() {
   getViews()
 }
 ).subscribe()
-  useEffect(()=>{
-    console.log("hi")
-    getViews()
-  },[])
+  
   return (
     <div className="container mx-auto">
       <ul className="grid gap-4">
